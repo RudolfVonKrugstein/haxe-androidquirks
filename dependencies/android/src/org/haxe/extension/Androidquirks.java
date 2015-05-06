@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
-
+import android.view.Window;
+import android.os.Build;
+import android.util.Log;
 
 /* 
 	You can use the Android Extension class in order to hook
@@ -58,19 +60,29 @@ public class Androidquirks extends Extension {
 		
 	}
 	
+	private void setFullScreenFlags() {
+		mainActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		if (Build.VERSION.SDK_INT < 16) {
+			//mainActivity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			//mainActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        } else {
+			View decorView = mainActivity.getWindow().getDecorView();
+			int uiOptions = decorView.getSystemUiVisibility()
+					      //| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+					      //| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+					      | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+					      //| View.SYSTEM_UI_FLAG_FULLSCREEN
+					      //| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+			decorView.setSystemUiVisibility(uiOptions);
+		}
+	}
 	
 	/**
 	 * Called when the activity is starting.
 	 */
 	public void onCreate (Bundle savedInstanceState) {
-		mainActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
-		View decorView = mainActivity.getWindow().getDecorView();
-		int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-				| View.SYSTEM_UI_FLAG_FULLSCREEN;
-		decorView.setSystemUiVisibility(uiOptions);
+		setFullScreenFlags();
 	}
 	
 	
@@ -111,12 +123,7 @@ public class Androidquirks extends Extension {
 	 * to start interacting with the user.
 	 */
 	public void onResume () {
-		View decorView = mainActivity.getWindow().getDecorView();
-		int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-	            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-				| View.SYSTEM_UI_FLAG_FULLSCREEN;
-		decorView.setSystemUiVisibility(uiOptions);
+		setFullScreenFlags();
 	}
 	
 	/**
@@ -125,14 +132,7 @@ public class Androidquirks extends Extension {
 	 * user.
 	 */
 	public void onStart () {
-		View decorView = mainActivity.getWindow().getDecorView();
-		int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-	            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-				| View.SYSTEM_UI_FLAG_FULLSCREEN;
-		decorView.setSystemUiVisibility(uiOptions);
-		
-		
+		setFullScreenFlags();
 	}
 	
 	
